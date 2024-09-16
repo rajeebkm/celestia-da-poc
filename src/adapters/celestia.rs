@@ -19,15 +19,27 @@ impl CelestiaAdapter {
 #[async_trait]
 impl AdapterFunctions for CelestiaAdapter {
     async fn push_data(&self, namespace_id: &[u8], data: &[u8]) -> Option<u64> {
+        println!("Pushing Data to Celestia....");
+
+        // println!("namespace_id: {:?}", namespace_id);
+        // println!("blob data: {:?}", data);
+        // println!("supersol.as_bytes {:?}", "supersol".as_bytes());
+        // println!("send_data_to_celestia_devnet.as_bytes.to_vec() {:?}", b"send_data_to_celestia_devnet".to_vec());
+
         let namespace = Namespace::new_v0(namespace_id).expect("Invalid namespace");
         let blob = Blob::new(namespace, data.to_vec()).expect("Blob creation failed");
-
+        // let namespace = Namespace::new_v0(b"rajeeb").expect("Invalid namespace");
+        // let blob = Blob::new(namespace, b"send_data_to_celestai_devnet".to_vec()).expect(
+        //     "Blob creating failed"
+        // );    
+      
         let height = self.client
             .blob_submit(&[blob.clone()], TxConfig::default())
             .await
             .ok()?;
-        
+
         Some(height)
+
     }
 
     async fn pull_data(&self, height: u64, namespace_id: &[u8]) -> Result<Vec<u8>, String> {
